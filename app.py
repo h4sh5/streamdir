@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask, request, render_template_string
+from flask import Flask, request, render_template_string, redirect
 import sqlite3
 import requests
 import re
@@ -15,6 +15,101 @@ gcur.execute("CREATE TABLE IF NOT EXISTS episode(id INTEGER, show_id INTEGER, ur
 gcur.execute("CREATE TABLE IF NOT EXISTS progress(show_id INT, episode_url TEXT, seen BOOL)")
 
 VID_EXTS = ['mp4', 'mov', 'mpg', 'mpeg', 'm4a', 'avi','wmv', 'avi','mkv','webm','asf','m4v','flv']
+# use this to bruteforce video types on browser
+all_video_types = '''
+video/mpeg4-generic
+video/av1
+video/mp4
+video/h261
+video/h263
+video/h263-1998
+video/h263-2000
+video/h264
+video/h264-rcdo
+video/h264-svc
+video/h265
+video/h266
+video/iso.segment
+video/1d-interleaved-parityfec
+video/3gpp
+video/3gpp2
+video/3gpp-tt
+video/bmpeg
+video/bt656
+video/celb
+video/dv
+video/encaprtp
+video/evc
+video/example
+video/ffv1
+video/flexfec
+video/jpeg
+video/jpeg2000
+video/jxsv
+video/matroska
+video/matroska-3d
+video/mj2
+video/mp1s
+video/mp2p
+video/mp2t
+video/mp4v-es
+video/mpv
+video/nv
+video/ogg
+video/parityfec
+video/pointer
+video/quicktime
+video/raptorfec
+video/raw
+video/rtp-enc-aescm128
+video/rtploopback
+video/rtx
+video/scip
+video/smpte291
+video/smpte292m
+video/ulpfec
+video/vc1
+video/vc2
+video/vnd.cctv
+video/vnd.dece.hd
+video/vnd.dece.mobile
+video/vnd.dece.mp4
+video/vnd.dece.pd
+video/vnd.dece.sd
+video/vnd.dece.video
+video/vnd.directv.mpeg
+video/vnd.directv.mpeg-tts
+video/vnd.dlna.mpeg-tts
+video/vnd.dvb.file
+video/vnd.fvt
+video/vnd.hns.video
+video/vnd.iptvforum.1dparityfec-1010
+video/vnd.iptvforum.1dparityfec-2005
+video/vnd.iptvforum.2dparityfec-1010
+video/vnd.iptvforum.2dparityfec-2005
+video/vnd.iptvforum.ttsavc
+video/vnd.iptvforum.ttsmpeg2
+video/vnd.motorola.video
+video/vnd.motorola.videop
+video/vnd.mpegurl
+video/vnd.ms-playready.media.pyv
+video/vnd.nokia.interleaved-multimedia
+video/vnd.nokia.mp4vr
+video/vnd.nokia.videovoip
+video/vnd.objectvideo
+video/vnd.radgamettools.bink
+video/vnd.radgamettools.smacker
+video/vnd.sealed.mpeg1
+video/vnd.sealed.mpeg4
+video/vnd.sealed.swf
+video/vnd.sealedmedia.softseal.mov
+video/vnd.uvvu.mp4
+video/vnd.youtube.yt
+video/vnd.vivo
+video/vp8
+video/vp9
+'''.split('\n')
+
 
 '''
 a little streaming app for open HTTP dirs
@@ -83,6 +178,8 @@ def index():
 				title = title.split('/')[-1]
 			add_show(url, title, video_links)
 
+		return redirect("/", code=302)
+
 	d = get_shows()
 
 
@@ -142,6 +239,11 @@ def play():
 
 <video  id="myVideo" controls autoplay>
  <source src="{{vidurl}}" type="video/{{vidtype}}">
+ <source src="{{vidurl}}">
+ {% for video_type in all_video_types %}
+ <source src="{{vidurl}}" type="{{video_type}}">
+
+ {% endfor %}
   video not supported
 </video>
 
@@ -174,7 +276,7 @@ def play():
 
 </script>
 
-		''', vidurl=url, next_ep_id=next_ep_id, show_id=show_id, vidtype=vidtype)
+		''', vidurl=url, next_ep_id=next_ep_id, show_id=show_id, vidtype=vidtype, all_video_types=all_video_types)
 
 if __name__ == "__main__":
 	app.run(port=5005,debug=True)
