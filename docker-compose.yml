@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  web:
+    image: h4sh5/streamdir
+    ports:
+      - '5005:5000'
+    restart: always
