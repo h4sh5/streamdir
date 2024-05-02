@@ -21,6 +21,10 @@ You can run this with docker
 
 `docker run -it -p 80:5000 h4sh5/streamdir`
 
+or use the docker-compose file in this repo:
+
+`docker-compose up -d`
+
 Then visit http://localhost
 
 ### Run directly
