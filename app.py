@@ -132,7 +132,7 @@ def play():
 	vidtype = url.split('.')[-1].lower() # e.g. mp4 
 
 	return render_template_string('''
-
+<title>streamdir</title>
 <style>
 	video {
 		 width:99vw;
