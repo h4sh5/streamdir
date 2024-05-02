@@ -89,7 +89,7 @@ def index():
 
 	return render_template_string('''
 		<title>streamdir</title>
-		<form action=/ method=GET>url of show http open dir: <input name=url></input><input type=submit></form>
+		<form action=/ method=GET>url of http index with video files: <input name=url></input><input type=submit></form>
 
 		{% for show in shows %}
 		<p><a href="/show?id={{show.id}}">{{show.title}}</a></p>
